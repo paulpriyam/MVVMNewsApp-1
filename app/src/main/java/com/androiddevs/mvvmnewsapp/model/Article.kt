@@ -4,9 +4,16 @@ package com.androiddevs.mvvmnewsapp.model
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Keep
+@Entity(
+    tableName = "article"
+)
 data class Article(
+
+    @PrimaryKey(autoGenerate = true                       )
+    var id: Int? = null,
     @SerializedName("author")
     val author: String,
     @SerializedName("content")

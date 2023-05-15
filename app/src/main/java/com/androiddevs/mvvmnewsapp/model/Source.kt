@@ -10,4 +10,4 @@ data class Source(
     val id: String,
     @SerializedName("name")
     val name: String
-)
+):java.io.Serializable

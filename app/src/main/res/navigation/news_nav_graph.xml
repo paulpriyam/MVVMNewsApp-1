@@ -34,9 +34,7 @@
         android:label="ArticleFragment" >
         <argument
             android:name="article"
-            app:argType="com.androiddevs.mvvmnewsapp.model.Article"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:argType="com.androiddevs.mvvmnewsapp.model.Article"/>
     </fragment>
     <fragment
         android:id="@+id/searchNewsFragment"

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.androiddevs.mvvmnewsapp.model.Article
 import com.androiddevs.mvvmnewsapp.model.NewsResponse
 import com.androiddevs.mvvmnewsapp.repository.NewsRepository
 import com.androiddevs.mvvmnewsapp.utils.ResponseWrapper
@@ -25,7 +26,6 @@ class NewsViewModel(
     private val searchPageSiz = 10
     private val page = 1
     private val searchPage = 1
-
 
 
     fun getBreakingNews() = viewModelScope.launch {
@@ -57,5 +57,15 @@ class NewsViewModel(
         }
         return ResponseWrapper.Error(response.message())
     }
+
+    fun savedArticle(article: Article) = viewModelScope.launch {
+        newsRepository.upsert(article)
+    }
+
+    fun deleteArticle(article: Article) = viewModelScope.launch {
+        newsRepository.deleteArticle(article)
+    }
+
+    fun getSavedArticles() = newsRepository.getAllSavedArticles()
 
 }

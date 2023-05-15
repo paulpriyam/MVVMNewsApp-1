@@ -31,12 +31,10 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
             Glide.with(itemView).load(article.urlToImage).into(itemView.ivArticleImage)
             itemView.tvTitle.text = article.title
             itemView.tvDescription.text = article.description
-            itemView.tvSource.text = article.source.name
+            itemView.tvSource.text = article.source?.name
             itemView.tvPublishedAt.text = article.publishedAt
             itemView.rootView.setOnClickListener {
-                onItemClickListener?.let {
-                    it.invoke(article)
-                }
+                onItemClickListener?.invoke(article)
             }
         }
     }

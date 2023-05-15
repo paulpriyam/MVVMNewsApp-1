@@ -22,7 +22,8 @@
             android:id="@+id/newsNavHostFragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
             app:navGraph="@navigation/news_nav_graph"
-            app:defaultNavGraph="true"/>
+            app:defaultNavHost="true"
+            />
 
 
 

@@ -12,7 +12,7 @@ import androidx.room.PrimaryKey
 )
 data class Article(
 
-    @PrimaryKey(autoGenerate = true                       )
+    @PrimaryKey(autoGenerate = true)
     var id: Int? = null,
     @SerializedName("author")
     val author: String,
@@ -30,4 +30,4 @@ data class Article(
     val url: String,
     @SerializedName("urlToImage")
     val urlToImage: String
-)
+) : java.io.Serializable

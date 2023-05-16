@@ -1,9 +1,17 @@
 package com.androiddevs.mvvmnewsapp.viewmodel
 
+import android.app.Application
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.ConnectivityManager.*
+import android.net.NetworkCapabilities.*
+import android.os.Build
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.androiddevs.mvvmnewsapp.NewsApplication
 import com.androiddevs.mvvmnewsapp.model.Article
 import com.androiddevs.mvvmnewsapp.model.NewsResponse
 import com.androiddevs.mvvmnewsapp.repository.NewsRepository
@@ -12,8 +20,9 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class NewsViewModel(
+    app: Application,
     private val newsRepository: NewsRepository
-) : ViewModel() {
+) : AndroidViewModel(app) {
 
     private var _newsLiveData = MutableLiveData<ResponseWrapper<NewsResponse>>()
     val newsLiveData: LiveData<ResponseWrapper<NewsResponse>> get() = _newsLiveData
@@ -67,5 +76,33 @@ class NewsViewModel(
     }
 
     fun getSavedArticles() = newsRepository.getAllSavedArticles()
+
+    fun hasNetworkConnection(): Boolean {
+        val connectivityManager = getApplication<NewsApplication>().getSystemService(
+            Context.CONNECTIVITY_SERVICE
+        ) as ConnectivityManager
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            val activeNetwork = connectivityManager.activeNetwork ?: return false
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+            return when {
+                capabilities.hasTransport(TRANSPORT_WIFI) -> true
+                capabilities.hasTransport(TRANSPORT_CELLULAR) -> true
+                capabilities.hasTransport(TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
+        } else {
+            connectivityManager.activeNetworkInfo?.apply {
+                return when (type) {
+                    TYPE_WIFI -> true
+                    TYPE_MOBILE -> true
+                    TYPE_ETHERNET -> true
+                    else -> false
+                }
+            }
+            return false
+        }
+    }
 
 }

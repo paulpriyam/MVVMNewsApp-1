@@ -11,11 +11,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.androiddevs.mvvmnewsapp.NewsApplication
 import com.androiddevs.mvvmnewsapp.model.Article
 import com.androiddevs.mvvmnewsapp.model.NewsResponse
+import com.androiddevs.mvvmnewsapp.paging.NewsPagingSource
 import com.androiddevs.mvvmnewsapp.repository.NewsRepository
 import com.androiddevs.mvvmnewsapp.utils.ResponseWrapper
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
@@ -35,18 +41,28 @@ class NewsViewModel(
     private val searchPageSiz = 10
     private val page = 1
     private val searchPage = 1
+    var newsPager: Flow<PagingData<Article>>? = null
+    var searchNewsPager: Flow<PagingData<Article>>? = null
 
 
-    fun getBreakingNews() = viewModelScope.launch {
-        _newsLiveData.postValue(ResponseWrapper.Loading())
-        val response = newsRepository.getBreakingNews(countryCode, pageSize, page)
-        _newsLiveData.postValue(handleNewsResponse(response))
+    fun getBreakingNews() {
+        viewModelScope.launch {
+            newsPager = Pager(PagingConfig(pageSize = 20)) {
+                NewsPagingSource(newsRepository, "in")
+            }.flow.cachedIn(viewModelScope)
+        }
+//        _newsLiveData.postValue(ResponseWrapper.Loading())
+//        val response = newsRepository.getBreakingNews(countryCode, pageSize, page)
+//        _newsLiveData.postValue(handleNewsResponse(response))
     }
 
-    fun getSearchNews(searchText: String) = viewModelScope.launch {
-        _searchNewsLiveData.postValue(ResponseWrapper.Loading())
-        val response = newsRepository.getSearchedNews(searchText, searchPageSiz, searchPage)
-        _searchNewsLiveData.postValue(handleSearchedNewsResponse(response))
+
+    fun getSearchNews(searchText: String) {
+        viewModelScope.launch {
+            searchNewsPager = Pager(PagingConfig(pageSize = 20)) {
+                NewsPagingSource(newsRepository, null, searchText)
+            }.flow.cachedIn(viewModelScope)
+        }
     }
 
     private fun handleNewsResponse(response: Response<NewsResponse>): ResponseWrapper<NewsResponse> {

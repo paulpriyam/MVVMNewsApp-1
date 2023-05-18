@@ -5,7 +5,7 @@ import com.androiddevs.mvvmnewsapp.db.NewsDatabase
 import com.androiddevs.mvvmnewsapp.model.Article
 
 class NewsRepository(
-    val db: NewsDatabase
+    private val db: NewsDatabase
 ) {
 
     suspend fun getBreakingNews(countryCode: String, pageSize: Int, page: Int) =

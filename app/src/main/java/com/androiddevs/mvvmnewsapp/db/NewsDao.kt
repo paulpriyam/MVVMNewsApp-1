@@ -12,7 +12,7 @@ import com.androiddevs.mvvmnewsapp.model.Article
 interface NewsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(article: Article): Long
+    suspend fun upsert(article: Article)
 
     @Query("SELECT * from article")
     fun getAllNews(): LiveData<List<Article>>

@@ -3,6 +3,7 @@ package com.androiddevs.mvvmnewsapp.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -11,18 +12,21 @@ import com.androiddevs.mvvmnewsapp.model.Article
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_article_preview.view.*
 
-class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
+class NewsAdapter : PagingDataAdapter<Article, NewsAdapter.NewsViewHolder>(differCallback) {
 
-    private val differCallback = object : DiffUtil.ItemCallback<Article>() {
-        override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
-            return oldItem.url == newItem.url
+    companion object {
+        val differCallback = object : DiffUtil.ItemCallback<Article>() {
+            override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
+                return oldItem.url == newItem.url
+            }
+
+            override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean {
+                return oldItem == newItem
+            }
+
         }
-
-        override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean {
-            return oldItem == newItem
-        }
-
     }
+
 
     val differ = AsyncListDiffer(this, differCallback)
 
@@ -47,13 +51,15 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
         )
     }
 
-    override fun getItemCount(): Int {
-        return differ.currentList.size
-    }
+//    override fun getItemCount(): Int {
+//        return differ.currentList.size
+//    }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        val article = differ.currentList[position]
-        holder.bind(article)
+        val article =getItem(position)
+        if (article != null) {
+            holder.bind(article)
+        }
     }
 
     private var onItemClickListener: ((Article) -> Unit)? = null
